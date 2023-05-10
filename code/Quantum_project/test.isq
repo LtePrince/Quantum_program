@@ -1,0 +1,5 @@
+qbit a, b;
+    X(a);
+    CNOT(a, b);
+    M(a);
+    M(b);
