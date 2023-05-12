@@ -43,3 +43,11 @@ if query_id_isQ:
 # 输出状态和结果
 #print(task.state)
 #print(task.result())
+
+# 当测量比特超过10个时，量子计算机端就不再为用户做结果的概率统计和读取矫正，需要用户自行处理。
+probability_whole=account.readout_data_to_state_probabilities_whole(result)
+print(probability_whole)
+probability_part=account.readout_data_to_state_probabilities_part(result)
+print(probability_part)
+
+
