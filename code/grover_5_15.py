@@ -47,15 +47,25 @@ def Grover(n, ID_num, token_num, status, target, data):
 
     # step 1: apply Hadamard gates on all qubits
     qc.h(range(n))
-    qc.x([3,4,5])
+    qc.barrier()
+    
+    # qc.x([3,4,5])
+    # qc.cx(0,3)
+    # qc.cx(1,4)
+    # qc.cx(2,5)
+    # qc.barrier()
     
     # step 2: apply r rounds of the phase oracle and the diffuser
     for _ in range(r):
         qc.append(phase_oracle(n, target, data), range(n))
         qc.append(diffuser(n), range(n))
+    qc.barrier()
 
     # step 3: measure all qubits
     qc.measure(range(n), range(n))
+    
+    
+    # qc.measure(range(n+token_num), range(n+token_num))
 
     return qc
 
