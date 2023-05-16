@@ -36,10 +36,10 @@ def diffuser(n):
     return qc
 
 
-def Grover(n, target, data):
+def Grover(n, ID_num, token_num, status, target, data):
 
     # Create a quantum circuit on n qubits
-    qc = QuantumCircuit(n, n)
+    qc = QuantumCircuit(n+token_num, n+token_num)
 
     # Determine r
     r = int(np.floor(np.pi/4*np.sqrt(2**n/len(target))))
@@ -47,7 +47,7 @@ def Grover(n, target, data):
 
     # step 1: apply Hadamard gates on all qubits
     qc.h(range(n))
-    
+    qc.x([3,4,5])
     
     # step 2: apply r rounds of the phase oracle and the diffuser
     for _ in range(r):
@@ -59,11 +59,13 @@ def Grover(n, target, data):
 
     return qc
 
-target = ['010']
-data = ['110', '111', '001', '101', '010']
+target = '101'
+data = ['110', '010', '001', '101', '010']
 
-mycircuit = Grover(3, target, data)
+# 三个qubit用来存储index，三个qubit用来存储ID，三个qubit用来存储token，一个qubit用来存储status
+mycircuit = Grover(3,3,3, 1, target, data)
 mycircuit.draw(output = 'mpl')
+
 
 # measure
 from qiskit import Aer, execute
