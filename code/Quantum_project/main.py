@@ -29,6 +29,10 @@ isq_qcis='''
     '''
 # 1、使用转换后的QCIS并指定运行机器运行程序
 account = Account(login_key='3a04cbeef74fa6ec481581b56030708a', machine_name='应答机A')
+
+# 拓扑结构映射
+isq_qcis = account.qcis_mapping_isq(isq_qcis)
+
 query_id_isQ = account.submit_job(circuit=isq_qcis, version="Bell_state_isQ")
 if query_id_isQ:
     result = account.query_experiment(query_id_isQ, max_wait_time=360000)
@@ -43,6 +47,7 @@ if query_id_isQ:
 # 输出状态和结果
 #print(task.state)
 #print(task.result())
+
 
 # 当测量比特超过10个时，量子计算机端就不再为用户做结果的概率统计和读取矫正，需要用户自行处理。
 probability_whole=account.readout_data_to_state_probabilities_whole(result)
