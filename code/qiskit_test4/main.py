@@ -35,7 +35,7 @@ def diffuser(nqubits):
         qc.x(qubit)
     for qubit in range(nqubits):
         qc.h(qubit)
-    #qc.draw(output="mpl")
+    qc.draw(output="mpl")
     U_s=qc.to_gate()
     U_s.name="U_s"
     return U_s

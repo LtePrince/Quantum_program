@@ -21,11 +21,11 @@ print(ld_res)
 # 以下为远程平台测试的方法，一共提供两种方式，每次运行只能选择其中一种方式运行
 isq_qcis='''
     X Q1
-    Y2P Q8
-    CZ Q1 Q8
-    Y2M Q8
+    Y2P Q2
+    CZ Q1 Q2
+    Y2M Q2
     M Q1
-    M Q8
+    M Q2
     '''
 # 1、使用转换后的QCIS并指定运行机器运行程序
 account = Account(login_key='3a04cbeef74fa6ec481581b56030708a', machine_name='应答机A')
@@ -50,9 +50,9 @@ if query_id_isQ:
 
 
 # 当测量比特超过10个时，量子计算机端就不再为用户做结果的概率统计和读取矫正，需要用户自行处理。
-probability_whole=account.readout_data_to_state_probabilities_whole(result)
-print(probability_whole)
-probability_part=account.readout_data_to_state_probabilities_part(result)
-print(probability_part)
+# probability_whole=account.readout_data_to_state_probabilities_whole(result)
+# print(probability_whole)
+# probability_part=account.readout_data_to_state_probabilities_part(result)
+# print(probability_part)
 
 
