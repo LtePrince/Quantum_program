@@ -2,30 +2,29 @@
 import isq
 from isq import LocalDevice, QcisDevice
 from isq import quantumCor
-from ezQpy import * 
+from ezQpy import *
 import copy
 
 pi = 3.1415
 
-def calMatrix(a, b, c, d):
-    return [[0.5, 0.5, 0.5, -0.5], [0.5, 0.5, -0.5, 0.5], [0.5, -0.5, 0.5, 0.5], [0.5, -0.5, -0.5, -0.5]]
+a_list = np.array([[0.5, -0.5, -0.5, -0.5], [0.5, 0.5, -0.5, 0.5], [0.5, -0.5, 0.5, 0.5], [0.5, 0.5, 0.5, -0.5]])
 
-t_list = np.array([[1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-         [1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1],
-         [1, -1, -1, -1, 1, 1, 1, 1, -1, -1, -1, -1, 1, 1, 1, 1],
-         [1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1],
-         [1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1],
-         [1, -1, 1, 1, -1, -1, 1, 1, 1, 1, -1, -1, 1, 1, -1, -1],
-         [1, -1, 1, 1, 1, 1, -1, -1, -1, -1, 1, 1, 1, 1, -1, -1],
-         [1, -1, 1, 1, 1, 1, -1, -1, 1, 1, -1, -1, -1, -1, 1, 1],
-         [1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1],
-         [1, 1, -1, 1, -1, 1, -1, 1, 1, -1, 1, -1, 1, -1, 1, -1],
-         [1, 1, -1, 1, 1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, -1],
-         [1, 1, -1, 1, 1, -1, 1, -1, 1, -1, 1, -1, -1, 1, -1, 1],
-         [1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1],
-         [1, 1, 1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, 1],
-         [1, 1, 1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, -1, -1, 1],
-         [1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1, 1, 1, -1]]) / 4.0
+b_list = np.array([[1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],#0000
+                   [1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1],#0001
+                   [1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1],#0010
+                   [1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1],#0011
+                   [1, -1, -1, -1, 1, 1, 1, 1, -1, -1, -1, -1, 1, 1, 1, 1],#0100
+                   [1, 1, -1, 1, 1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, -1],#0101
+                   [1, -1, 1, 1, 1, 1, -1, -1, -1, -1, 1, 1, 1, 1, -1, -1],#0110
+                   [1, 1, 1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, -1, -1, 1],#0111
+                   [1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1],#1000
+                   [1, 1, -1, 1, -1, 1, -1, 1, 1, -1, 1, -1, 1, -1, 1, -1],#1001
+                   [1, -1, 1, 1, -1, -1, 1, 1, 1, 1, -1, -1, 1, 1, -1, -1],#1010
+                   [1, 1, 1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, 1],#1011
+                   [1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1],#1100
+                   [1, 1, -1, 1, 1, -1, 1, -1, 1, -1, 1, -1, -1, 1, -1, 1],#1101
+                   [1, -1, 1, 1, 1, 1, -1, -1, 1, 1, -1, -1, -1, -1, 1, 1],#1110
+                   [1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1, 1, 1, -1]]) / 4.0#1111
 
 ccz = np.array([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -44,12 +43,25 @@ ccz = np.array([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1]])
 
+
 # 实现对于量子电路的构造
 # param: bit_len: 量子比特数
 # param: bit: 量子比特
 # param: matrix: 量子门矩阵
 # return: isq_str: 量子电路字符串
-def circuit(bit_len, bit : list, matrix):
+def save(num, Matrix, cnt):
+    new_Matrix = np.copy(Matrix)
+    tmp = np.copy(Matrix[cnt + num])
+    for i in range(cnt + num, -1, -1):
+        if i == cnt:
+            break
+        new_Matrix[i] = new_Matrix[i - 1]
+    new_Matrix[cnt] = tmp
+    # print(new_Matrix)
+    return new_Matrix
+
+
+def circuit(bit_len, bit: list, matrix):
     # 根据量子比特数，初始化量子比特
     isq_str = '''qbit '''
     for i in range(bit_len):
@@ -80,9 +92,9 @@ def circuit(bit_len, bit : list, matrix):
         if i != bit_len - 1:
             isq_str += ('Q' + str(i + 1) + ', ')
         else:
-            isq_str += ('Q' + str(i + 1) + ');\n')     
-    
-    # 设置迭代过程
+            isq_str += ('Q' + str(i + 1) + ');\n')
+
+            # 设置迭代过程
     for i in range(bit_len):
         isq_str += ('H(Q' + str(i + 1) + ');\n')
     for i in range(bit_len):
@@ -91,14 +103,14 @@ def circuit(bit_len, bit : list, matrix):
     # 设置CCZ门
     if bit_len == 2:
         isq_str += ('CZ(Q1, Q2);\n')
-    else: 
+    else:
         isq_str += ('CCZ(')
         for i in range(bit_len):
             if i != bit_len - 1:
                 isq_str += ('Q' + str(i + 1) + ', ')
             else:
                 isq_str += ('Q' + str(i + 1) + ');\n')
-    
+
     # 设置迭代过程
     for i in range(bit_len):
         isq_str += ('X(Q' + str(i + 1) + ');\n')
@@ -111,9 +123,11 @@ def circuit(bit_len, bit : list, matrix):
 
     return isq_str
 
+
 def readBit():
     bit_in = input("输入8位查找bit")
     return bit_in
+
 
 # 检测RZ门电路, 传入量子程序, 匹配其中的RZ门和参数
 # 例如RZ Q1 3.14156
@@ -143,50 +157,48 @@ def check_RZ(isq_qcis: str):
     return isq_qcis
 
 
-def run(bit_in, bit_number, matrix):  #bit_number为处理位数输入2或4
+def run(bit_in, bit_number, matrix):  # bit_number为处理位数输入2或4
     res = ""
     if bit_number == 2:
-        for i in range(0, 4):
+        for i in range(0, 1):
             bit_2 = [bit_in[i * 2], bit_in[i * 2 + 1]]
-        #isq_str = circuit(bit_in[i * 2], bit_in[i * 2 + 1], calMatrix) 
-            isq_str = circuit(2, bit_2, matrix) #isq_str存储字符串
+            # isq_str = circuit(bit_in[i * 2], bit_in[i * 2 + 1], calMatrix)
+            isq_str = circuit(2, bit_2, matrix)  # isq_str存储字符串
 
             # =============================================isq跑================================================
             # 转换为qcis指令
-            ld_res = ld.run(isq_str)
             ld = LocalDevice()
+            ld_res = ld.run(isq_str)
             # print(ld_res)
 
             # =============================================isq跑================================================
 
             # =============================================真机跑================================================
-        #print(isq_str)
-            ld = LocalDevice()
-            ir = ld.compile_to_ir(isq_str, target = "qcis")
-            account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='ClosedBetaQC')
-        # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='应答机A')
-
-        # 拓扑结构映射
-            isq_qcis = account.qcis_mapping_isq(ir)
-            isq_qcis = check_RZ(isq_qcis)
-            query_id_isQ = account.submit_job(circuit=isq_qcis,version="isQ")
-
-            if query_id_isQ:
-                ld_res = account.query_experiment(query_id_isQ, max_wait_time=360000)['probability']
-
+            # print(isq_str)
+            # ld = LocalDevice()
+            # ir = ld.compile_to_ir(isq_str, target="qcis")
+            # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='ClosedBetaQC')
+            # # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='应答机A')
+            #
+            # # 拓扑结构映射
+            # isq_qcis = account.qcis_mapping_isq(ir)
+            # isq_qcis = check_RZ(isq_qcis)
+            # query_id_isQ = account.submit_job(circuit=isq_qcis, version="isQ")
+            #
+            # if query_id_isQ:
+            #     ld_res = account.query_experiment(query_id_isQ, max_wait_time=360000)['probability']
 
             # =============================================真机跑================================================
-
 
             m = max(ld_res.values())
             for key, value in ld_res.items():
                 if (value == m):
                     res += key
     else:
-        for i in range(0, 2):
-            bit_2 = [bit_in[i * 4], bit_in[i * 4 + 1],bit_in[i * 4 + 2], bit_in[i * 4 + 3]]
-        #isq_str = circuit(bit_in[i * 2], bit_in[i * 2 + 1], calMatrix) 
-            isq_str = circuit(4, bit_2, matrix) #isq_str存储字符串
+        for i in range(0, 1):
+            bit_2 = [bit_in[i * 4], bit_in[i * 4 + 1], bit_in[i * 4 + 2], bit_in[i * 4 + 3]]
+            # isq_str = circuit(bit_in[i * 2], bit_in[i * 2 + 1], calMatrix)
+            isq_str = circuit(4, bit_2, matrix)  # isq_str存储字符串
 
             # =============================================isq跑================================================
             # 转换为qcis指令
@@ -197,21 +209,20 @@ def run(bit_in, bit_number, matrix):  #bit_number为处理位数输入2或4
             # =============================================isq跑================================================
 
             # =============================================真机跑================================================
-            
-        # #print(isq_str)
-        #     # ld = LocalDevice()
-        #     ir = ld.compile_to_ir(isq_str, target = "qcis")
-        #     account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='ClosedBetaQC')
-        # # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='应答机A')
 
-        # # 拓扑结构映射
-        #     isq_qcis = account.qcis_mapping_isq(ir)
-        #     isq_qcis = check_RZ(isq_qcis)
-        #     query_id_isQ = account.submit_job(circuit=isq_qcis,version="isQ")
-
-        #     if query_id_isQ:
-        #         ld_res = account.query_experiment(query_id_isQ, max_wait_time=360000)['probability']
-
+            #print(isq_str)
+            # ld = LocalDevice()
+            # ir = ld.compile_to_ir(isq_str, target = "qcis")
+            # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='ClosedBetaQC')
+            # # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='应答机A')
+            #
+            # # 拓扑结构映射
+            # isq_qcis = account.qcis_mapping_isq(ir)
+            # isq_qcis = check_RZ(isq_qcis)
+            # query_id_isQ = account.submit_job(circuit=isq_qcis,version="isQ")
+            #
+            # if query_id_isQ:
+            #     ld_res = account.query_experiment(query_id_isQ, max_wait_time=360000)['probability']
 
             # =============================================真机跑================================================
             m = max(ld_res.values())
@@ -219,6 +230,15 @@ def run(bit_in, bit_number, matrix):  #bit_number为处理位数输入2或4
                 if (value == m):
                     res += key
     return res
+
+
 if __name__ == "__main__":
-    res = run(readBit(), 4, t_list)
+    # a_new_list = save(2,a_list,0)
+    # a_new_list = save(1, a_new_list, 1)
+
+    b_new_list = save(2, b_list, 0)
+
+    res = run(readBit(), 4, b_new_list)
+    # res = run(readBit(), 2, a_new_list)
+
     print(res)
