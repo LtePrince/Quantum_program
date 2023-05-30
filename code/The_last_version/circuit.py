@@ -8,6 +8,9 @@ import copy
 pi = 3.1415
 
 a_list = np.array([[0.5, -0.5, -0.5, -0.5], [0.5, 0.5, -0.5, 0.5], [0.5, -0.5, 0.5, 0.5], [0.5, 0.5, 0.5, -0.5]])
+a_order = np.array([0,1,2,3])
+a_input = np.array([0,0,0,0])
+a_cnt = 0
 
 b_list = np.array([[1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],#0000
                    [1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1],#0001
@@ -25,6 +28,9 @@ b_list = np.array([[1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -
                    [1, 1, -1, 1, 1, -1, 1, -1, 1, -1, 1, -1, -1, 1, -1, 1],#1101
                    [1, -1, 1, 1, 1, 1, -1, -1, 1, 1, -1, -1, -1, -1, 1, 1],#1110
                    [1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1, 1, 1, -1]]) / 4.0#1111
+b_order = np.array([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
+b_input = np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+b_cnt = 0
 
 ccz = np.array([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -49,16 +55,44 @@ ccz = np.array([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 # param: bit: 量子比特
 # param: matrix: 量子门矩阵
 # return: isq_str: 量子电路字符串
-def save(num, Matrix, cnt):
+def save(ct1, ct2, Matrix, order, m_input, len):
+    if m_input[ct2]==1:
+        print("save error.")
+        return Matrix
+    for i in range(len):
+        if ct1 == order[i]:
+            ct1_index = i
+            # print(i)
     new_Matrix = np.copy(Matrix)
-    tmp = np.copy(Matrix[cnt + num])
-    for i in range(cnt + num, -1, -1):
-        if i == cnt:
-            break
-        new_Matrix[i] = new_Matrix[i - 1]
-    new_Matrix[cnt] = tmp
+    ct2_list = np.copy(new_Matrix[ct2])
+    # print(ct2_list)
+    new_Matrix[ct2]=new_Matrix[ct1_index]
+    new_Matrix[ct1_index]=ct2_list
     # print(new_Matrix)
+    ct2_order = np.copy(order[ct2])
+    order[ct2]=order[ct1_index]
+    order[ct1_index]=ct2_order
+    m_input[ct2]=1
     return new_Matrix
+    # if(num<=cnt):
+    #     new_Matrix = np.copy(Matrix)
+    #     tmp = np.copy(Matrix[cnt + num])
+    #     for i in range(cnt + num, -1, -1):
+    #         if i == cnt:
+    #             break
+    #         new_Matrix[i] = new_Matrix[i - 1]
+    #     new_Matrix[cnt] = tmp
+    #     # print(new_Matrix)
+    #     return new_Matrix
+    # else:
+    #     new_Matrix = np.copy(Matrix)
+    #     tmp = np.copy(Matrix[num])
+    #     for i in range(num, -1, -1):
+    #         if i == cnt:
+    #             break
+    #         new_Matrix[i] = new_Matrix[i - 1]
+    #     new_Matrix[cnt] = tmp
+    #     return new_Matrix
 
 
 def circuit(bit_len, bit: list, matrix):
@@ -234,9 +268,10 @@ def run(bit_in, bit_number, matrix):  # bit_number为处理位数输入2或4
 
 if __name__ == "__main__":
     # a_new_list = save(2,a_list,0)
-    # a_new_list = save(1, a_new_list, 1)
+    # a_new_list = save(3, a_new_list, 1)
 
-    b_new_list = save(2, b_list, 0)
+    b_new_list = save(2, 0, b_list, b_order, b_input, 16)
+    b_new_list = save(0, 8, b_new_list, b_order, b_input, 16)
 
     res = run(readBit(), 4, b_new_list)
     # res = run(readBit(), 2, a_new_list)
