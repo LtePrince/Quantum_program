@@ -9,8 +9,10 @@ pi = 3.1415
 
 a_list = np.array([[0.5, -0.5, -0.5, -0.5], [0.5, 0.5, -0.5, 0.5], [0.5, -0.5, 0.5, 0.5], [0.5, 0.5, 0.5, -0.5]])
 a_order = np.array([0,1,2,3])
-a_input = np.array([0,0,0,0])
-a_cnt = 0
+a_input0 = np.array([0,0,0,0])
+a_input1 = np.array([0,0,0,0])
+a_cnt0 = 0
+a_cnt1 = 0
 
 b_list = np.array([[1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],#0000
                    [1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1],#0001
@@ -57,7 +59,9 @@ ccz = np.array([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 # params ct1: 用于存储映射关系的第一个输入
 # params ct2: 用于存储映射关系的第二个输入
 def save(ct1, ct2, Matrix, order, m_input, len):
-    if m_input[ct2]==1:
+    if m_input[ct2] == 1:
+        if order[ct2] == ct1:
+            return Matrix
         print("save error.")
         return Matrix
     for i in range(len):
@@ -67,33 +71,14 @@ def save(ct1, ct2, Matrix, order, m_input, len):
     new_Matrix = np.copy(Matrix)
     ct2_list = np.copy(new_Matrix[ct2])
     # print(ct2_list)
-    new_Matrix[ct2]=new_Matrix[ct1_index]
-    new_Matrix[ct1_index]=ct2_list
+    new_Matrix[ct2] = new_Matrix[ct1_index]
+    new_Matrix[ct1_index] = ct2_list
     # print(new_Matrix)
     ct2_order = np.copy(order[ct2])
-    order[ct2]=order[ct1_index]
-    order[ct1_index]=ct2_order
-    m_input[ct2]=1
+    order[ct2] = order[ct1_index]
+    order[ct1_index] = ct2_order
+    m_input[ct2] = 1
     return new_Matrix
-    # if(num<=cnt):
-    #     new_Matrix = np.copy(Matrix)
-    #     tmp = np.copy(Matrix[cnt + num])
-    #     for i in range(cnt + num, -1, -1):
-    #         if i == cnt:
-    #             break
-    #         new_Matrix[i] = new_Matrix[i - 1]
-    #     new_Matrix[cnt] = tmp
-    #     # print(new_Matrix)
-    #     return new_Matrix
-    # else:
-    #     new_Matrix = np.copy(Matrix)
-    #     tmp = np.copy(Matrix[num])
-    #     for i in range(num, -1, -1):
-    #         if i == cnt:
-    #             break
-    #         new_Matrix[i] = new_Matrix[i - 1]
-    #     new_Matrix[cnt] = tmp
-    #     return new_Matrix
 
 # 实现对于量子电路的构造
 # param: bit_len: 量子比特数
@@ -196,7 +181,7 @@ def check_RZ(isq_qcis: str):
     return isq_qcis
 
 
-def run(bit_in, bit_number, matrix):  # bit_number为处理位数输入2或4
+def run(bit_in, bit_number, matrix, tag):  # bit_number为处理位数输入2或4
     res = ""
     if bit_in == 'Q':
         return bit_in
@@ -206,28 +191,29 @@ def run(bit_in, bit_number, matrix):  # bit_number为处理位数输入2或4
             # isq_str = circuit(bit_in[i * 2], bit_in[i * 2 + 1], calMatrix)
             isq_str = circuit(2, bit_2, matrix)  # isq_str存储字符串
 
-            # =============================================isq跑================================================
-            # 转换为qcis指令
-            ld = LocalDevice()
-            ld_res = ld.run(isq_str)
-            # print(ld_res)
+            if tag == 1:    
+                # =============================================isq跑================================================
+                # 转换为qcis指令
+                ld = LocalDevice()
+                ld_res = ld.run(isq_str)
+                # print(ld_res)
 
-            # =============================================isq跑================================================
-
+                # =============================================isq跑================================================
+            else:
             # =============================================真机跑================================================
-            # print(isq_str)
-            # ld = LocalDevice()
-            # ir = ld.compile_to_ir(isq_str, target="qcis")
-            # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='ClosedBetaQC')
-            # # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='应答机A')
-            #
-            # # 拓扑结构映射
-            # isq_qcis = account.qcis_mapping_isq(ir)
-            # isq_qcis = check_RZ(isq_qcis)
-            # query_id_isQ = account.submit_job(circuit=isq_qcis, version="isQ")
-            #
-            # if query_id_isQ:
-            #     ld_res = account.query_experiment(query_id_isQ, max_wait_time=360000)['probability']
+                # print(isq_str)
+                ld = LocalDevice()
+                ir = ld.compile_to_ir(isq_str, target="qcis")
+                account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='ClosedBetaQC')
+                # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='应答机A')
+                
+                # 拓扑结构映射
+                isq_qcis = account.qcis_mapping_isq(ir)
+                isq_qcis = check_RZ(isq_qcis)
+                query_id_isQ = account.submit_job(circuit=isq_qcis, version="isQ")
+                
+                if query_id_isQ:
+                    ld_res = account.query_experiment(query_id_isQ, max_wait_time=360000)['probability']
 
             # =============================================真机跑================================================
 
@@ -240,32 +226,34 @@ def run(bit_in, bit_number, matrix):  # bit_number为处理位数输入2或4
             bit_2 = [bit_in[i * 4], bit_in[i * 4 + 1], bit_in[i * 4 + 2], bit_in[i * 4 + 3]]
             # isq_str = circuit(bit_in[i * 2], bit_in[i * 2 + 1], calMatrix)
             isq_str = circuit(4, bit_2, matrix)  # isq_str存储字符串
+            if tag == 1:    
+                # =============================================isq跑================================================
+                # 转换为qcis指令
+                ld = LocalDevice(2000)
+                ld_res = ld.run(isq_str)
+                # print(ld_res)
 
-            # =============================================isq跑================================================
-            # 转换为qcis指令
-            ld = LocalDevice(2000)
-            ld_res = ld.run(isq_str)
-            # print(ld_res)
+                # =============================================isq跑================================================
 
-            # =============================================isq跑================================================
+            else:
+                # =============================================真机跑================================================
 
-            # =============================================真机跑================================================
+                # print(isq_str)
+                ld = LocalDevice()
+                ir = ld.compile_to_ir(isq_str, target = "qcis")
+                account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='ClosedBetaQC')
+                # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='应答机A')
+                
+                # 拓扑结构映射
+                isq_qcis = account.qcis_mapping_isq(ir)
+                isq_qcis = check_RZ(isq_qcis)
+                query_id_isQ = account.submit_job(circuit=isq_qcis,version="isQ")
+                
+                if query_id_isQ:
+                    ld_res = account.query_experiment(query_id_isQ, max_wait_time=360000)['probability']
 
-            #print(isq_str)
-            # ld = LocalDevice()
-            # ir = ld.compile_to_ir(isq_str, target = "qcis")
-            # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='ClosedBetaQC')
-            # # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='应答机A')
-            #
-            # # 拓扑结构映射
-            # isq_qcis = account.qcis_mapping_isq(ir)
-            # isq_qcis = check_RZ(isq_qcis)
-            # query_id_isQ = account.submit_job(circuit=isq_qcis,version="isQ")
-            #
-            # if query_id_isQ:
-            #     ld_res = account.query_experiment(query_id_isQ, max_wait_time=360000)['probability']
+                # =============================================真机跑================================================
 
-            # =============================================真机跑================================================
             m = max(ld_res.values())
             for key, value in ld_res.items():
                 if (value == m):
@@ -295,30 +283,66 @@ if __name__ == "__main__":
     # b_new_list = save(0, 15, b_new_list, b_order, b_input, 16)
     
     print("欢迎进入量子比特搜索系统！")
-    print("请输入要搜索的比特数：", end="")
-    bit_num = int(input())
-    print("请输入密钥哈希值与地址索引的映射关系（十进制输入，输入Q停止）：")
-    cnt = 0
-    while True:
-        line = input()
-        if line == 'Q':
-            break
-        else:
-            line = line.split()
-            key = line[0]
-            value = line[1]
-            if cnt == 0:
-                b_new_list = save(int(key), int(value), b_list, b_order, b_input, 16)
+    print("请选择本地模拟或真机运行（输入0为ClosedBetaQC，或1为本地模拟）：", end="")
+    mode = int(input())
+    if mode == 1:
+        print("请输入要搜索的比特数：", end="")
+        bit_num = int(input())
+        print("请输入密钥哈希值与地址索引的映射关系（十进制输入，输入Q停止）：")
+        cnt = 0
+        while True:
+            line = input()
+            if line == 'Q':
+                break
             else:
-                b_new_list = save(int(key), int(value), b_new_list, b_order, b_input, 16)
-            cnt += 1
+                line = line.split()
+                key = line[0]
+                value = line[1]
+                if cnt == 0:
+                    b_new_list = save(int(key), int(value), b_list, b_order, b_input, 16)
+                else:
+                    b_new_list = save(int(key), int(value), b_new_list, b_order, b_input, 16)
+                cnt += 1
 
-    print("现在您可以开始进行搜索！")
-    while True:
-        res = run(readBit(), 4, b_new_list)
-        if res == 'Q':
-            break
-        print("密钥地址为：", res)
+        print("现在您可以开始进行搜索！")
+        while True:
+            res = run(readBit(), 4, b_new_list, mode)
+            if res == 'Q':
+                break
+            print("密钥地址为：", res)
+
+    else:
+        print("请输入要搜索的比特数：", end="")
+        bit_num = int(input())
+        print("请输入密钥哈希值与地址索引的映射关系（十进制输入，输入Q停止）：")
+        cnt = 0
+        while True:
+            line = input()
+            if line == 'Q':
+                break
+            else:
+                line = line.split()
+                key = line[0]
+                value = line[1]
+                if cnt == 0:
+                    # print(int(key) % 4, int(value) % 4, int(int(key) / 4), int(int(value) / 4))
+                    a_new_list0 = save(int(key) % 4, int(value) % 4, a_list, a_order, a_input0, 4)
+                    a_new_list1 = save(int(int(key) / 4),  int(int(value) / 4), a_list, a_order, a_input1, 4)
+                else:
+                    a_new_list0 = save(int(key) % 4, int(value) % 4, a_new_list0, a_order, a_input0, 4)
+                    a_new_list1 = save(int(int(key) / 4),  int(int(value) / 4), a_new_list1, a_order, a_input1, 4)
+                cnt += 1
+
+        print("现在您可以开始进行搜索！")
+        while True:
+            res0 = run(readBit(), 2, a_list, mode)
+
+            if res0 == 'Q':
+                break
+            res1 = run(readBit(), 2, a_list, mode)
+            res = res0 + res1
+            print("密钥地址为：", res)
+        
     
     print("感谢您的使用！")
     # res = run(readBit(), 2, a_new_list)
