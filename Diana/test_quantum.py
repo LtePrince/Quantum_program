@@ -21,10 +21,12 @@ if __name__ == '__main__':
     dict = {}
     # set the origin circuit and the Diana
     input_str = input('input the keyword here:   ')
+    input_fileid = input('input the file id here:   ')
     dur, ownerkey, keyleft, keyright = Diana.Setup()
     cb = check_binary(16)
     ca = check_binary(16)
-    dur, ct1, ct2=Diana.Encrypt(input_str , 1, '0')
+    cc = check_binary(16)
+    dur, ct1, ct2=Diana.Encrypt(input_str , 1, input_fileid)
     num1 = cb.insert(ct1)
     num2 = ca.insert(ct2)
     dict[input_str] = num1
@@ -34,11 +36,11 @@ if __name__ == '__main__':
     print('the encrytion is done, the quantum circuit is updateting...')
     new_matrix = circuit.save(num1, num2, circuit.b_list, circuit.b_order, circuit.b_input, 16)
     input_str = input('input next keyword here:   ')
-
-
     while input_str != 'exit':
+        
+        input_fileid = input('input next file id here:   ')
         print('-----------------------------------------------------')
-        dur, ct1, ct2=Diana.Encrypt(input_str , 1, '0')
+        dur, ct1, ct2=Diana.Encrypt(input_str , 1, input_fileid)
         num1 = cb.insert(ct1)
         num2 = ca.insert(ct2)
         dict[input_str] = num1
@@ -51,12 +53,21 @@ if __name__ == '__main__':
 
         print('-----------------------------------------------------')
         input_str = input('input next keyword here:   ')
+        
 
     print('\n')
     
     input_keyword = input("please input the keyword!:    ")
     # bit_in = circuit.readBit()
-    bit_in = dict[input_keyword]
+    # bit_in = dict[input_keyword]
+    dur, k2, kc, kdepth = Diana.Trapdoor(input_keyword, 1)
+    dur, ctcheck = Diana.Search( 1, k2, kc, kdepth)
+    num_bit = cc.insert(ctcheck)
+    # if num_bit == 0: 
+    #     bit_in = 15
+    # else:
+    #     bit_in = num_bit - 1
+    bit_in = num_bit
     # convert bit_in to 4-bits binary string
     bit_in = bin(bit_in)[2:]
     bit_in = '0'*(4-len(bit_in)) + bit_in
@@ -66,12 +77,19 @@ if __name__ == '__main__':
         print('the binary result from Grover Algroithm is', res)
         # Convert binary string to decimal int
         decimal_value = int(res, 2)
-        print('the decimal value is', decimal_value)
+        print('the file id number is', decimal_value)
         # print('the corresponding string is', cb.get(ct1))
         # bit_in = circuit.readBit()
         input_keyword = input("please input the next keyword!:    ")
         # bit_in = circuit.readBit()
-        bit_in = dict[input_keyword]
+        dur, k2, kc, kdepth = Diana.Trapdoor(input_keyword, 1)
+        dur, ctcheck = Diana.Search( 1, k2, kc, kdepth)
+        num_bit = cc.insert(ctcheck)
+        # if num_bit == 0: 
+        #     bit_in = 15
+        # else:
+        #     bit_in = num_bit - 1
+        bit_in = num_bit
         # convert bit_in to 4-bits binary string
         bit_in = bin(bit_in)[2:]
         bit_in = '0'*(4-len(bit_in)) + bit_in

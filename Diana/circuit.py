@@ -221,13 +221,17 @@ def run(bit_in, bit_number, matrix):  # bit_number为处理位数输入2或4
             # ld = LocalDevice()
             # ir = ld.compile_to_ir(isq_str, target="qcis")
             # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='ClosedBetaQC')
+            # print("the quantum circuit launch successfully!")
+            # print("the login key is:f719ca98fc5ae6ab03580a039bd0289f")
+            # print("the machine name is: ClosedBetaQC")
+        
             # # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='应答机A')
-            #
+            
             # # 拓扑结构映射
             # isq_qcis = account.qcis_mapping_isq(ir)
             # isq_qcis = check_RZ(isq_qcis)
             # query_id_isQ = account.submit_job(circuit=isq_qcis, version="isQ")
-            #
+            
             # if query_id_isQ:
             #     ld_res = account.query_experiment(query_id_isQ, max_wait_time=360000)['probability']
 
@@ -257,17 +261,20 @@ def run(bit_in, bit_number, matrix):  # bit_number为处理位数输入2或4
 
             # =============================================真机跑================================================
 
-            #print(isq_str)
+            # print(isq_str)
             # ld = LocalDevice()
             # ir = ld.compile_to_ir(isq_str, target = "qcis")
             # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='ClosedBetaQC')
             # # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='应答机A')
-            #
+            # print("the quantum circuit launch successfully!")
+            # print("the login key is:f719ca98fc5ae6ab03580a039bd0289f")
+            # print("the machine name is: ClosedBetaQC")
+            
             # # 拓扑结构映射
             # isq_qcis = account.qcis_mapping_isq(ir)
             # isq_qcis = check_RZ(isq_qcis)
             # query_id_isQ = account.submit_job(circuit=isq_qcis,version="isQ")
-            #
+            
             # if query_id_isQ:
             #     ld_res = account.query_experiment(query_id_isQ, max_wait_time=360000)['probability']
 

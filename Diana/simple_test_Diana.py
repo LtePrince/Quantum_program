@@ -25,12 +25,7 @@ class check_binary():
 	def get(self,binary_string):
 	 	return self.hash_dic[binary_string]	
 	
-# dur, ownerkey, keyleft, keyright = Diana.Setup()
-# cb = check_binary(16)
-# ca = check_binary(16) 
-# dur, ct1, ct2=Diana.Encrypt('114515' , 1, '0')
-# print(cb.insert(ct1))
-# print('x',ca.insert(ct2))
+
 # # dur, ct1, ct2=Diana.Encrypt('114516' , 1, '0')
 # # print(cb.insert(ct1))
 # # print('x',ca.insert(ct2))
@@ -58,8 +53,16 @@ class check_binary():
 # # # pdb.set_trace()
 
 
+
+# dur, ownerkey, keyleft, keyright = Diana.Setup()
+# cb = check_binary(16)
+# ca = check_binary(16) 
+# dur, ct1, ct2=Diana.Encrypt('114515' , 1, 'file.txt')
+# print(cb.insert(ct1))
+# print('x',ca.insert(ct2))
 # dur, k2, kc, kdepth = Diana.Trapdoor('114515', 1)
 # dur, ctcheck = Diana.Search( 1, k2, kc, kdepth)
 
-# print(cb.insert(ctcheck))
+
+# print(cb.insert(ctcheck)-1)
 
