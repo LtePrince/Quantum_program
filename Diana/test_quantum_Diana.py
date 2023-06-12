@@ -8,7 +8,7 @@ import circuit
 the test file for Diana encryption scheme
 date: 2023-6-5
 author: Liheng Luo
-using command: python/python3 test_quantum.py
+using command: python/python3 test_quantum_Diana.py
 """
 
 
