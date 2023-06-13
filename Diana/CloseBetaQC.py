@@ -270,7 +270,8 @@ def run(bit_in, bit_number, matrix, tag):  # bit_number为处理位数输入2或
                 if (value == m):
                     res += key
     # 将res的高低位互换
-    res = res[1]+res[0]
+    if tag == 0:
+        res = res[1]+res[0]
     return res
 
 # define the str of the L and the int of id
