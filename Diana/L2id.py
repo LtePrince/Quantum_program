@@ -15,7 +15,7 @@ using command: python/python3 L2id.py
 # define the str of the L and the int of id
 dict_L2id = {
     'o0jn0VfPiytFqKTGcyulci64TX74HRyL+ElS5l4PvkI=':'1',
-    'ThnNx6gK+07LBwUzGmxcYXBK5LikPRGW7/UrC4gjL+s=':'2',
+    'o0jn0VfPiytFqKTGcyulci64TX74HRyL+ElS5l4PvkI=':'2',
     '6n1aVPHFxs4NiKYqhsWOv03tg2juq6+NWAmEMXYK0LI=':'3',
     'wvMh232ycRio8CKcyRPNPgZ18F6y2kwfh3PzWIUVPGk=':'4',
     'xzv0PpAd3nGP6PXqjQvb8sdDwwvnPMLJ48viW74nrII=':'5',

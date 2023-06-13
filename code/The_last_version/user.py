@@ -326,22 +326,26 @@ if __name__ == "__main__":
                 value = line[1]
                 if cnt == 0:
                     # print(int(key) % 4, int(value) % 4, int(int(key) / 4), int(int(value) / 4))
-                    a_new_list0 = save(int(key) % 4, int(value) % 4, a_list, a_order, a_input0, 4)
-                    a_new_list1 = save(int(int(key) / 4),  int(int(value) / 4), a_list, a_order, a_input1, 4)
-                else:
-                    a_new_list0 = save(int(key) % 4, int(value) % 4, a_new_list0, a_order, a_input0, 4)
-                    a_new_list1 = save(int(int(key) / 4),  int(int(value) / 4), a_new_list1, a_order, a_input1, 4)
+                    a_new_list0 = save(int(key) % 4, int(value) % 4, np.copy(a_list), np.copy(a_order), np.copy(a_input0), 4)
+                    # print(a_new_list0)
+                    a_new_list1 = save(int(int(key) / 4),  int(int(value) / 4), np.copy(a_list), np.copy(a_order), np.copy(a_input1), 4)
+                    # print(a_new_list1)
+                # else:
+                #     a_new_list0 = save(int(key) % 4, int(value) % 4, a_new_list0, a_order, a_input0, 4)
+                #     a_new_list1 = save(int(int(key) / 4),  int(int(value) / 4), a_new_list1, a_order, a_input1, 4)
                 cnt += 1
 
         print("现在您可以开始进行搜索！")
         while True:
-            res0 = run(readBit(), 2, a_list, mode)
+            print(a_new_list0)
+            print(a_new_list1)
+            res0 = run(readBit(), 2, a_new_list0, mode)
 
-            if res0 == 'Q':
-                break
-            res1 = run(readBit(), 2, a_list, mode)
-            res = res0 + res1
-            print("密钥地址为：", res)
+            # if res0 == 'Q':
+            #     break
+            # res1 = run(readBit(), 2, a_new_list1, mode)
+            # res = res1+res0
+            print("密钥地址为：", res0)
         
     
     print("感谢您的使用！")
