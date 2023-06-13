@@ -11,6 +11,7 @@ the test file for Diana encryption scheme
 date: 2023-6-13
 author: Liheng Luo Mingxin Yang
 using command: python/python3 CloseBetaQC.py
+dependency: ezQpy, isq, numpy
 """
 
 pi = 3.1415
@@ -291,31 +292,42 @@ if __name__ == "__main__":
     print("请选择本地模拟或真机运行（输入0为ClosedBetaQC，或1为本地模拟）：", end="")
     mode = int(input())
     if mode == 1:
-        print("请输入要搜索的比特数：", end="")
-        bit_num = int(input())
-        print("请继续输入要搜索的L字符串：（字符串输入，输入Q停止）：")
+        print("请继续输入要搜索的加密数据库索引：（字符串输入，输入Q停止）：")
         cnt = 0
         while True:
             line = input()
             if line == 'Q':
                 break
             else:
-                line = line.split()
-                key = line[0]
-                value = line[1]
+                key = hash(line)%16
+                dict_str2int[line] = key
+                print(key)
+                value = dict_L2id[line]
+                print(value)
                 if cnt == 0:
                     b_new_list = save(int(key), int(value), b_list, b_order, b_input, 16)
                 else:
                     b_new_list = save(int(key), int(value), b_new_list, b_order, b_input, 16)
                 cnt += 1
-            print("请继续输入要搜索的L字符串：（字符串输入，输入Q停止）：")
+            print("请继续输入要搜索的加密数据库索引：（字符串输入，输入Q停止）：")
 
         print("现在您可以开始进行搜索！")
         while True:
-            res = run(readBit(), 4, b_new_list, mode)
+            print("请输入可搜索密文", end="")
+            search = input()
+            search_int = dict_str2int[search]
+            # 将search_int转换成四位二进制字符串
+            search_int = bin(search_int)[2:]
+            search_binary = '0'*(4-len(search_int)) + search_int
+            print(search_binary)
+            # search_int = check_binary(search_int, 4)
+            res = run(search_binary, 4, b_new_list, mode)
             if res == 'Q':
                 break
             print("密钥地址为：", res)
+            # 将res转换成十进制证书
+            res_int = int(res, 2)
+            print("文件id：", res_int)
 
     else:
         print("请输入要搜索的比特数：", end="")
