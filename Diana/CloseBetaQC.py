@@ -1,9 +1,17 @@
-# coding=gbk
+
 import isq
 from isq import LocalDevice, QcisDevice
 from isq import quantumCor
 from ezQpy import *
 import copy
+
+
+"""
+the test file for Diana encryption scheme
+date: 2023-6-13
+author: Liheng Luo Mingxin Yang
+using command: python/python3 CloseBetaQC.py
+"""
 
 pi = 3.1415
 
@@ -188,6 +196,7 @@ def run(bit_in, bit_number, matrix, tag):  # bit_number为处理位数输入2或
     if bit_number == 2:
         for i in range(0, 1):
             bit_2 = [bit_in[i * 2], bit_in[i * 2 + 1]]
+            print(bit_2)
             # isq_str = circuit(bit_in[i * 2], bit_in[i * 2 + 1], calMatrix)
             isq_str = circuit(2, bit_2, matrix)  # isq_str存储字符串
 
@@ -206,7 +215,7 @@ def run(bit_in, bit_number, matrix, tag):  # bit_number为处理位数输入2或
                 ir = ld.compile_to_ir(isq_str, target="qcis")
                 account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='ClosedBetaQC')
                 # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='应答机A')
-                
+                # account.assign_parameters(name="2-bits搜索实验")
                 # 拓扑结构映射
                 isq_qcis = account.qcis_mapping_isq(ir)
                 isq_qcis = check_RZ(isq_qcis)
@@ -243,6 +252,7 @@ def run(bit_in, bit_number, matrix, tag):  # bit_number为处理位数输入2或
                 ir = ld.compile_to_ir(isq_str, target = "qcis")
                 account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='ClosedBetaQC')
                 # account = Account(login_key='f719ca98fc5ae6ab03580a039bd0289f', machine_name='应答机A')
+                # 设置实验名称
                 
                 # 拓扑结构映射
                 isq_qcis = account.qcis_mapping_isq(ir)
@@ -258,20 +268,22 @@ def run(bit_in, bit_number, matrix, tag):  # bit_number为处理位数输入2或
             for key, value in ld_res.items():
                 if (value == m):
                     res += key
+    # 将res的高低位互换
+    res = res[1]+res[0]
     return res
 
 # define the str of the L and the int of id
-dict_L = {
-    '1':'o0jn0VfPiytFqKTGcyulci64TX74HRyL+ElS5l4PvkI=',
-    '2':'ThnNx6gK+07LBwUzGmxcYXBK5LikPRGW7/UrC4gjL+s=',
-    '3':'6n1aVPHFxs4NiKYqhsWOv03tg2juq6+NWAmEMXYK0LI=',
-    '4':'wvMh232ycRio8CKcyRPNPgZ18F6y2kwfh3PzWIUVPGk=',
-    '5':'xzv0PpAd3nGP6PXqjQvb8sdDwwvnPMLJ48viW74nrII=',
-    '6':'ktviQzwt7ITgEGhUA89C+8eCxVwcyvru044T+7C96A8=',
-    '7':'dxL8iHsHZTdC1sETpX1hIRXDQS6WrVy2oJDya1ESdxM=',
-    '8':'zJR7mxiM28vLdHEf4abTfqRY6xTIBDWMUfcuLIjjExk=' 
+dict_L2id = {
+    'o0jn0VfPiytFqKTGcyulci64TX74HRyL+ElS5l4PvkI=':'1',
+    'ThnNx6gK+07LBwUzGmxcYXBK5LikPRGW7/UrC4gjL+s=':'2',
+    '6n1aVPHFxs4NiKYqhsWOv03tg2juq6+NWAmEMXYK0LI=':'3',
+    'wvMh232ycRio8CKcyRPNPgZ18F6y2kwfh3PzWIUVPGk=':'4',
+    'xzv0PpAd3nGP6PXqjQvb8sdDwwvnPMLJ48viW74nrII=':'5',
+    'ktviQzwt7ITgEGhUA89C+8eCxVwcyvru044T+7C96A8=':'6',
+    'dxL8iHsHZTdC1sETpX1hIRXDQS6WrVy2oJDya1ESdxM=':'7',
+    'zJR7mxiM28vLdHEf4abTfqRY6xTIBDWMUfcuLIjjExk=':'8' 
 }
-
+dict_str2int = {}
 
 if __name__ == "__main__":
     
@@ -281,7 +293,7 @@ if __name__ == "__main__":
     if mode == 1:
         print("请输入要搜索的比特数：", end="")
         bit_num = int(input())
-        print("请输入密钥哈希值与地址索引的映射关系（十进制输入，输入Q停止）：")
+        print("请继续输入要搜索的L字符串：（字符串输入，输入Q停止）：")
         cnt = 0
         while True:
             line = input()
@@ -296,6 +308,7 @@ if __name__ == "__main__":
                 else:
                     b_new_list = save(int(key), int(value), b_new_list, b_order, b_input, 16)
                 cnt += 1
+            print("请继续输入要搜索的L字符串：（字符串输入，输入Q停止）：")
 
         print("现在您可以开始进行搜索！")
         while True:
@@ -307,34 +320,82 @@ if __name__ == "__main__":
     else:
         print("请输入要搜索的比特数：", end="")
         bit_num = int(input())
-        print("请输入密钥哈希值与地址索引的映射关系（十进制输入，输入Q停止）：")
+        print("请继续输入要搜索的加密数据库索引：（字符串输入，输入Q停止）：")
         cnt = 0
         while True:
             line = input()
             if line == 'Q':
                 break
             else:
-                line = line.split()
-                key = line[0]
-                value = line[1]
+                key = hash(line)%16
+                dict_str2int[line] = key
+                print("加密数据库索引的哈希值：",key)
+                value = dict_L2id[line]
+                print("可搜索密文：",value)
                 if cnt == 0:
                     # print(int(key) % 4, int(value) % 4, int(int(key) / 4), int(int(value) / 4))
-                    a_new_list0 = save(int(key) % 4, int(value) % 4, a_list, a_order, a_input0, 4)
-                    a_new_list1 = save(int(int(key) / 4),  int(int(value) / 4), a_list, a_order, a_input1, 4)
+                    # 获取key高两位
+                    key_high = int(key) >> 2
+                    # print(key_high)
+                    # 获取key低两位
+                    key_low = int(key) & 3
+                    # print(key_low)
+                    # 获取value高两位
+                    value_high = int(value) >> 2
+                    # print(value_high)
+                    # 获取value低两位
+                    value_low = int(value) & 3
+                    # print(value_low)
+                    a_new_list0 = save(key_high, value_high, np.copy(a_list), np.copy(a_order), np.copy(a_input0), 4)
+                    # print(a_new_list0)
+                    a_new_list1 = save(key_low,  value_low, np.copy(a_list), np.copy(a_order), np.copy(a_input1), 4)
+                    # print(a_new_list1)
                 else:
-                    a_new_list0 = save(int(key) % 4, int(value) % 4, a_new_list0, a_order, a_input0, 4)
-                    a_new_list1 = save(int(int(key) / 4),  int(int(value) / 4), a_new_list1, a_order, a_input1, 4)
+                    # 获取key高两位
+                    key_high = int(key) >> 2
+                    # print(key_high)
+                    # 获取key低两位
+                    key_low = int(key) & 3
+                    # print(key_low)
+                    # 获取value高两位
+                    value_high = int(value) >> 2
+                    # print(value_high)
+                    # 获取value低两位
+                    value_low = int(value) & 3
+                    # print(value_low)
+                    a_new_list0 = save(key_high, value_high, a_new_list0, a_order, a_input0, 4)
+                    a_new_list1 = save(key_low,  value_low, a_new_list1, a_order, a_input1, 4)
                 cnt += 1
+            print("请继续输入要搜索的加密数据库索引：（字符串输入，输入Q停止）：")
 
         print("现在您可以开始进行搜索！")
         while True:
-            res0 = run(readBit(), 2, a_list, mode)
-
-            if res0 == 'Q':
+            # print(a_new_list0)
+            # print(a_new_list1)
+            print("请输入加密数据库索引", end="")
+            search = input()
+            if search == 'Q':
                 break
-            res1 = run(readBit(), 2, a_list, mode)
-            res = res0 + res1
-            print("密钥地址为：", res)
+            search_int = dict_str2int[search]
+            # 将search_int转换成四位二进制字符串
+            search_int = bin(search_int)[2:]
+            search_binary = '0'*(4-len(search_int)) + search_int
+            bit_in = search_binary
+            # 取字符串前两位
+            bit_high = bit_in[:2]
+            # 取后两位
+            bit_low = bit_in[2:]
+            print(bit_high, bit_low)
+            print("程序已在量子云平台上运行")
+            res0 = run(bit_high, 2, a_new_list0, mode)
+            print("搜索结果的高两位为: ",res0)
+            res1 = run(bit_low, 2, a_new_list1, mode)
+            print("搜索结果的低两位为: ",res1)
+            res = res0+res1
+            print("文件id的可搜索密文（二进制）为：", res)
+
+            res_int = int(res, 2)
+            print("文件id的可搜索密文（十进制）为：", res_int)
         
     
     print("感谢您的使用！")

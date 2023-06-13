@@ -188,6 +188,7 @@ def run(bit_in, bit_number, matrix, tag):  # bit_number为处理位数输入2或4
     if bit_number == 2:
         for i in range(0, 1):
             bit_2 = [bit_in[i * 2], bit_in[i * 2 + 1]]
+            print(bit_2)
             # isq_str = circuit(bit_in[i * 2], bit_in[i * 2 + 1], calMatrix)
             isq_str = circuit(2, bit_2, matrix)  # isq_str存储字符串
 
@@ -326,9 +327,21 @@ if __name__ == "__main__":
                 value = line[1]
                 if cnt == 0:
                     # print(int(key) % 4, int(value) % 4, int(int(key) / 4), int(int(value) / 4))
-                    a_new_list0 = save(int(key) % 4, int(value) % 4, np.copy(a_list), np.copy(a_order), np.copy(a_input0), 4)
+                    # 获取key高两位
+                    key_high = int(key) >> 2
+                    print(key_high)
+                    # 获取key低两位
+                    key_low = int(key) & 3
+                    print(key_low)
+                    # 获取value高两位
+                    value_high = int(value) >> 2
+                    print(value_high)
+                    # 获取value低两位
+                    value_low = int(value) & 3
+                    print(value_low)
+                    a_new_list0 = save(key_high, value_high, np.copy(a_list), np.copy(a_order), np.copy(a_input0), 4)
                     # print(a_new_list0)
-                    a_new_list1 = save(int(int(key) / 4),  int(int(value) / 4), np.copy(a_list), np.copy(a_order), np.copy(a_input1), 4)
+                    a_new_list1 = save(key_low,  value_low, np.copy(a_list), np.copy(a_order), np.copy(a_input1), 4)
                     # print(a_new_list1)
                 # else:
                 #     a_new_list0 = save(int(key) % 4, int(value) % 4, a_new_list0, a_order, a_input0, 4)
@@ -339,13 +352,20 @@ if __name__ == "__main__":
         while True:
             print(a_new_list0)
             print(a_new_list1)
-            res0 = run(readBit(), 2, a_new_list0, mode)
-
-            # if res0 == 'Q':
-            #     break
-            # res1 = run(readBit(), 2, a_new_list1, mode)
-            # res = res1+res0
-            print("密钥地址为：", res0)
+            bit_in = input("请输入")
+            # 取字符串前两位
+            bit_high = bit_in[:2]
+            # 取后两位
+            bit_low = bit_in[2:]
+            print(bit_high, bit_low)
+            res0 = run(bit_high, 2, a_new_list0, mode)
+            print(res0)
+            if res0 == 'Q':
+                break
+            res1 = run(bit_low, 2, a_new_list1, mode)
+            print(res1)
+            res = res0+res1
+            print("密钥地址为：", res)
         
     
     print("感谢您的使用！")
